@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
-
-
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
@@ -15,11 +13,13 @@ class Todo(db.Model):
     complete = db.Column(db.Boolean)
 
 
-
 @app.route('/')
 def index():
-    todos = Todo.query.filter_by(complete=False).all()
-    return render_template('index.html', todos=todos)
+    incomplete = Todo.query.filter_by(complete=False).all()
+    complete = Todo.query.filter_by(complete=True).all()
+# TODO 
+# delete complete from database
+    return render_template('index.html', incomplete=incomplete)
 
 
 @app.route('/add', methods=['POST'])
@@ -40,7 +40,6 @@ def complete(id):
     db.session.commit()
 
     return redirect(url_for('index'))
-
 
 if __name__ == '__main__':
     app.run(debug=True)
